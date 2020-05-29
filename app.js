@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const user = require('./routes/user');
+const middleware = require('./routes/middleware');
 
 /* Configuración de Express */
 const app = express();
@@ -24,9 +25,14 @@ router.get('/', (req, res) => {
         .send({message: 'Todo bien desde el backend'});
 });
 
+/* Rutas generales */
 router.post('/auth/signup', user.emailSignup);
 router.post('/auth/login', user.emailLogin);
 
+/* Rutas privadas */
+router.get('/private', middleware.ensureAuthenticated, (req, res) => {
+    res.send({message: "Todo bien desde privado"});
+});
 
 /* Inciar el servidor y la base de datos */
 mongoose.connect('mongodb://localhost:27017/users', {useNewUrlParser: true, useUnifiedTopology: true}, (err) => {
